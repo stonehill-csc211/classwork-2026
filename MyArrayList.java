@@ -27,10 +27,29 @@ public class MyArrayList<T> implements MyList<T>{
         data = newData;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public T remove(int position) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'remove'");
+        T temp = (T)data[position];
+        shiftLeft(position);
+        this.length--;
+        return temp;
+    }
+
+    private void shiftLeft(int position){
+        if(data[position] == null) return;
+        else{
+            data[position] = data[position + 1];
+            shiftLeft(position + 1);
+        }
+    }
+
+    private void shiftRight(int position, int end){
+        if(position == end) return;
+        else{
+            data[end] = data[end - 1];
+            shiftRight(position, end - 1);
+        }
     }
 
     @Override
@@ -47,14 +66,44 @@ public class MyArrayList<T> implements MyList<T>{
 
     @Override
     public void insert(int position, T value) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'insert'");
+        shiftRight(position, this.length+1);
+        data[position] = value;
     }
 
     @Override
     public boolean contains(T value) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'contains'");
+    }
+
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < data.length; i++){
+            if(data[i] == null) sb.append("null");
+            else sb.append(data[i].toString());
+            sb.append(" ");
+        }
+        sb.append("Length: " + length);
+        return sb.toString();
+    }
+
+    public static void main(String[] args){
+        MyArrayList<Integer> myList = new MyArrayList<>();
+        myList.add(1);
+        myList.add(3);
+        myList.add(5);
+        myList.add(6);
+        myList.add(8);
+
+        System.out.println("Expecting: 8");
+        System.out.println(myList.remove(4));
+        System.out.println(myList.remove(1));
+
+        System.out.println(myList);
+
+        myList.insert(2, 15);
+
+        System.out.println(myList);
     }
     
 }
