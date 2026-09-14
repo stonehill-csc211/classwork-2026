@@ -1,4 +1,7 @@
-public class MyLinkedList<T> implements MyList<T>{
+import java.util.Iterator;
+import java.util.ListIterator;
+
+public class MyLinkedList<T> implements MyList<T>, Iterable<T>{
 
     private Node head, tail;
     private int length;
@@ -27,7 +30,7 @@ public class MyLinkedList<T> implements MyList<T>{
     @Override
     public void insert(int position, T value) {
         Node previous = getNode(position - 1);
-        Node next = getNode(position);
+        Node next = previous.next;
 
         Node newNode = new Node();
         newNode.value = value;
@@ -75,13 +78,15 @@ public class MyLinkedList<T> implements MyList<T>{
     }
     @Override
     public T get(int position) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'get'");
+        Node current = getNode(position);
+        return current.value;
     }
     @Override
     public T set(int position, T newValue) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'set'");
+        Node current = getNode(position);
+        T retval = current.value;
+        current.value = newValue;
+        return retval;
     }
     
     @Override
@@ -106,6 +111,10 @@ public class MyLinkedList<T> implements MyList<T>{
         return sb.toString();
     }
 
+    public ListIterator<T> iterator(){
+        return new MyIterator(this);
+    }
+
     public static void main(String[] args){
         MyLinkedList<Integer> myList = new MyLinkedList<>();
         myList.add(1);
@@ -123,6 +132,30 @@ public class MyLinkedList<T> implements MyList<T>{
         System.out.println(myList.remove(4));
 
         System.out.println(myList);
+    }
+
+    private class MyIterator implements ListIterator<T>{
+        Node current;
+        Node next;
+        private MyIterator(MyLinkedList<T> ll){
+            next = ll.head;
+            current = null;
+        }
+
+        public boolean hasNext(){
+            return next == null;
+        }
+
+        public T next(){
+            current = next;
+            next = current.next;
+            return current.value;
+        }
+
+        public void set(T newValue){
+            current.value = newValue;
+        }
+
     }
     
 }

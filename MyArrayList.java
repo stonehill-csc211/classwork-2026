@@ -1,3 +1,5 @@
+import java.util.Iterator;
+
 public class MyArrayList<T> implements MyList<T>{
 
     private Object[] data;
@@ -72,8 +74,10 @@ public class MyArrayList<T> implements MyList<T>{
 
     @Override
     public boolean contains(T value) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'contains'");
+        for(int i = 0; i < length; i++){
+            if(data[i].equals(value)) return true;
+        }
+        return false;
     }
 
     public String toString(){
@@ -85,6 +89,32 @@ public class MyArrayList<T> implements MyList<T>{
         }
         sb.append("Length: " + length);
         return sb.toString();
+    }
+
+    public Iterator<T> iterator(){
+        return new MyIterator(this);
+    }
+
+    private class MyIterator implements Iterator<T>{
+        int position;
+        MyArrayList<T> mAL;
+        private MyIterator(MyArrayList<T> al){
+            position = -1;
+            mAL = al;
+
+        }
+        public boolean hasNext(){
+            return position >= mAL.length;
+        }
+
+        public T next(){
+            position++;
+            return (T)mAL.data[position];
+        }
+
+        public void set(T newValue){
+            mAL.data[position] = newValue;
+        }
     }
 
     public static void main(String[] args){
