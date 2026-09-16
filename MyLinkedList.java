@@ -115,26 +115,7 @@ public class MyLinkedList<T> implements MyList<T>, Iterable<T>{
         return new MyIterator(this);
     }
 
-    public static void main(String[] args){
-        MyLinkedList<Integer> myList = new MyLinkedList<>();
-        myList.add(1);
-        myList.add(3);
-        myList.add(5);
-        myList.add(6);
-        myList.add(8);
-
-        System.out.println(myList);
-
-        myList.insert(2, 12);
-
-        System.out.println(myList);
-        System.out.println(myList.remove(1));
-        System.out.println(myList.remove(4));
-
-        System.out.println(myList);
-    }
-
-    private class MyIterator implements ListIterator<T>{
+    private class MyIterator implements Iterator<T>{
         Node current;
         Node next;
         private MyIterator(MyLinkedList<T> ll){
@@ -156,6 +137,25 @@ public class MyLinkedList<T> implements MyList<T>, Iterable<T>{
             current.value = newValue;
         }
 
+    }
+
+    public static void main(String[] args){
+        MyLinkedList<Integer> myList = new MyLinkedList<>();
+        myList.add(1);
+        myList.add(3);
+        myList.add(5);
+        myList.add(6);
+        myList.add(8);
+
+        System.out.println(myList);
+
+        myList.insert(2, 12);
+
+        System.out.println(myList);
+        System.out.println(myList.remove(1));
+        System.out.println(myList.remove(4));
+
+        System.out.println(myList);
     }
     
 }
