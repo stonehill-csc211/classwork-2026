@@ -143,7 +143,7 @@ public class MyLinkedList<T> implements MyList<T>, Iterable<T>{
         }
 
         public boolean hasNext(){
-            return next == null;
+            return next != null; // I did this wrong at first! Thanks to Catherine for catching it
         }
 
         public T next(){
