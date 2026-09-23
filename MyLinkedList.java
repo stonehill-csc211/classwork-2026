@@ -115,6 +115,30 @@ public class MyLinkedList<T> implements MyList<T>, Iterable<T>{
         return new MyIterator(this);
     }
 
+    private class MyIterator implements Iterator<T>{
+        Node current;
+        Node next;
+        private MyIterator(MyLinkedList<T> ll){
+            next = ll.head;
+            current = null;
+        }
+
+        public boolean hasNext(){
+            return next != null; // I did this wrong at first! Thanks to Catherine for catching it
+        }
+
+        public T next(){
+            current = next;
+            next = current.next;
+            return current.value;
+        }
+
+        public void set(T newValue){
+            current.value = newValue;
+        }
+
+    }
+
     public static void main(String[] args){
         MyLinkedList<Integer> myList = new MyLinkedList<>();
         myList.add(1);
@@ -132,30 +156,6 @@ public class MyLinkedList<T> implements MyList<T>, Iterable<T>{
         System.out.println(myList.remove(4));
 
         System.out.println(myList);
-    }
-
-    private class MyIterator implements ListIterator<T>{
-        Node current;
-        Node next;
-        private MyIterator(MyLinkedList<T> ll){
-            next = ll.head;
-            current = null;
-        }
-
-        public boolean hasNext(){
-            return next == null;
-        }
-
-        public T next(){
-            current = next;
-            next = current.next;
-            return current.value;
-        }
-
-        public void set(T newValue){
-            current.value = newValue;
-        }
-
     }
     
 }
