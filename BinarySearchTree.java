@@ -87,8 +87,10 @@ public class BinarySearchTree<T extends Comparable<T>> {
                 removeByReplacement(); // we know this won't fail because the size is greater than 1
                 return true;
             } else if(valueToRemove.compareTo(value) < 0){
-                // If it's the same as the left child
-                if(valueToRemove.compareTo(left.value) == 0){
+                // if left is null, we fail to find
+                if(this.left == null) return false;
+                // if it's the same as the left child
+                else if(valueToRemove.compareTo(left.value) == 0){
                     if(!left.removeByReplacement()){
                         left = null;
                     }
@@ -97,11 +99,15 @@ public class BinarySearchTree<T extends Comparable<T>> {
                 // otherwise recurse
                 else return this.left.remove(valueToRemove);
             } else {
-                if(valueToRemove.compareTo(this.right.value) == 0){
+                // if right is null, we fail to find
+                if(this.right == null) return false;
+                // if it's the same as the right child
+                else if(valueToRemove.compareTo(this.right.value) == 0){
                     if(!right.removeByReplacement()){
                         right = null;
                     }
                     return true;
+                // otherwise recurse
                 } else return this.right.remove(valueToRemove);
             }
         }
@@ -113,13 +119,15 @@ public class BinarySearchTree<T extends Comparable<T>> {
             if(this.left == null && this.right == null){ // we're at a leaf
                 return false;
             } else if(this.left == null){
-                // find the smallest right descendant
+                // find the smallest right descendant parent
                 descendant = this.findSmallestLeafParent();
+                // swap with the smallest right descendant
                 this.value = descendant.left.value;
                 descendant.left = null;
             } else{
-                // find the largest left descendant
+                // find the largest left descendant parent
                 descendant = this.findLargestLeafParent();
+                // swap with the largest left descendant
                 this.value = descendant.right.value;
                 descendant.right = null;
             }
@@ -129,12 +137,14 @@ public class BinarySearchTree<T extends Comparable<T>> {
 
         private Node findLargestLeafParent(){
             // helper for remove
+            // finds the parent of the largest descendant
             if(this.right.right == null) return this;
             else return this.right.findLargestLeafParent();
         }
 
         private Node findSmallestLeafParent(){
-        // helper for remove
+            // helper for remove
+            // finds the parent of the smallest descendant
             if(this.left.left == null) return this;
             else return this.left.findSmallestLeafParent();
         }
