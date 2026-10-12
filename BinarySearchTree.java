@@ -12,10 +12,13 @@ public class BinarySearchTree<T extends Comparable<T>> {
     public void add(T newElement){
         if(root == null){
             root = new Node(newElement);
+            size++;
         } else{
-            root.add(newElement);
+            if(root.add(newElement)){
+                size++;
+            }
         }
-        size++;
+        
     }
 
     public boolean contains(T query){
@@ -29,13 +32,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
     public void remove(T element){
         if(root != null){
             // handle the case where we're removing the last element
-            if(element.compareTo(root.value) == 0 && size==1){
-                root = null;
-                size = 0;
-            }
-            else if(root.remove(element)){
-                size--;
-            }
+            root = root.remove(element);
         }
     }
 
@@ -49,20 +46,22 @@ public class BinarySearchTree<T extends Comparable<T>> {
             this.value = value;
         }
 
-        private void add(T newElement){
+        private boolean add(T newElement){
             if(newElement.compareTo(value) < 0){
                 if(left == null){
                     left = new Node(newElement);
+                    return true;
                 } else {
-                    left.add(newElement);
+                    return left.add(newElement);
                 }
             } else if(newElement.compareTo(value) > 0){
                 if(right == null){
                     right = new Node(newElement);
+                    return true;
                 } else {
-                    right.add(newElement);
+                    return right.add(newElement);
                 }
-            }
+            } else return false;
         }
 
         private boolean contains(T query){
@@ -78,75 +77,75 @@ public class BinarySearchTree<T extends Comparable<T>> {
         }
         
         /**
-        * Remove a value from the tree and shift a new value into its place
-        * only works if the size is greater than 1, if the size is 1, handle
-        * it in the public method
+        * Remove a value from the tree and return this node's new value
+        * Usually the new value will be this. Sometimes it will be null.
         */
-        private boolean remove(T valueToRemove){
+        private Node remove(T valueToRemove){
+            // if we've found the right node
             if(valueToRemove.compareTo(value) == 0){
-                removeByReplacement(); // we know this won't fail because the size is greater than 1
-                return true;
+                return removeFromRoot();
+            // if it's smaller look down the left subtree
             } else if(valueToRemove.compareTo(value) < 0){
-                // if left is null, we fail to find
-                if(this.left == null) return false;
-                // if it's the same as the left child
-                else if(valueToRemove.compareTo(left.value) == 0){
-                    if(!left.removeByReplacement()){
-                        left = null;
-                    }
-                    return true;
+                if(left == null) return this;
+                else{
+                    left = left.remove(valueToRemove);
+                    return this;
                 }
-                // otherwise recurse
-                else return this.left.remove(valueToRemove);
-            } else {
-                // if right is null, we fail to find
-                if(this.right == null) return false;
-                // if it's the same as the right child
-                else if(valueToRemove.compareTo(this.right.value) == 0){
-                    if(!right.removeByReplacement()){
-                        right = null;
-                    }
-                    return true;
-                // otherwise recurse
-                } else return this.right.remove(valueToRemove);
-            }
-        }
-        
-
-        private boolean removeByReplacement(){
-            // remove the data by swapping with a descendant and deleting
-            Node descendant;
-            if(this.left == null && this.right == null){ // we're at a leaf
-                return false;
-            } else if(this.left == null){
-                // find the smallest right descendant parent
-                descendant = this.findSmallestLeafParent();
-                // swap with the smallest right descendant
-                this.value = descendant.left.value;
-                descendant.left = null;
+            // if it's larger look down the right subtree
             } else{
-                // find the largest left descendant parent
-                descendant = this.findLargestLeafParent();
-                // swap with the largest left descendant
-                this.value = descendant.right.value;
-                descendant.right = null;
+                if(right == null) return this;
+                else{
+                    right = right.remove(valueToRemove);
+                    return this;
+                }
             }
-            return true;
-            
         }
 
-        private Node findLargestLeafParent(){
-            // helper for remove
-            // finds the parent of the largest descendant
-            if(this.right.right == null) return this;
-            else return this.right.findLargestLeafParent();
+        /**
+         * Remove this node by swapping its value or returning its replacement
+         */
+        private Node removeFromRoot(){
+            Node largestNode;
+            // if we've got two children
+            if(left != null && right != null){
+                largestNode = left.getLargestChild();
+                // we take its value
+                value = largestNode.value;
+                // then remove the node
+                if(largestNode == left) left = null;
+                else left.removeLeaf(largestNode);
+                size--;
+                return this;
+            } else if(right != null){
+                size--;
+                return right;
+            } else if(left != null){
+                size--;
+                return left;
+            } else{
+                size--;
+                return null;
+            }
+        }
+        /**
+         * Simply remove n from the tree
+         * assumes that n is a leaf
+         */
+        private void removeLeaf(Node n){
+            if(left == n){
+                left = null;
+            } else if(right == n){
+                right = null;
+            } else if(n.value.compareTo(value) < 0){
+                left.removeLeaf(n);
+            } else{
+                right.removeLeaf(n);
+            }
         }
 
-        private Node findSmallestLeafParent(){
-            // helper for remove
-            // finds the parent of the smallest descendant
-            if(this.left.left == null) return this;
-            else return this.left.findSmallestLeafParent();
+        private Node getLargestChild(){
+            if(right != null) return right.getLargestChild();
+            else return this;
         }
 
         
