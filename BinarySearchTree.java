@@ -39,6 +39,14 @@ public class BinarySearchTree<T extends Comparable<T>> {
         }
     }
 
+    public T getElement(T element){
+        if(root == null){
+            return null;
+        } else{
+            return root.getElement(element);
+        }
+    }
+
     public String toString(){
         if(root == null) return "";
         else return root.toString();
@@ -96,6 +104,18 @@ public class BinarySearchTree<T extends Comparable<T>> {
             } else {
                 if(right == null) return false;
                 return right.contains(query);
+            }
+        }
+
+        private T getElement(T query){
+            if(query.compareTo(value) == 0){
+                return value;
+            } else if(query.compareTo(value) < 0){
+                if(left == null) return null;
+                return left.getElement(query);
+            } else {
+                if(right == null) return null;
+                return right.getElement(query);
             }
         }
         
