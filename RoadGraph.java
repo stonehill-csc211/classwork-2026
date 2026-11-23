@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.PriorityQueue;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -37,21 +38,73 @@ public class RoadGraph {
      * Get an array of neighbors for a town
      */
     public String[] getNeighbors(String town){
-        // TODO
+        // get the index for the town name
+        int index = nameToIndex.get(town);
+        ArrayList<Integer> indices = new ArrayList<>();
+        // loop over the corresponding row of the adjacency matrix
+        for(int j = 0; j < distances[index].length; j++){
+            // collect the index values for the nonzero elements
+            if(distances[index][j] != 0){
+                indices.add(j);
+            }
+        }
+            
+        // convert each index value back to a town name
+        String[] neighbors = new String[indices.size()];
+        for(int i = 0; i < indices.size(); i++){
+            neighbors[i] = this.names.get(indices.get(i));
+        }
+        return neighbors;
     }
 
     /**
      * Get the distance between two neighboring towns
      */
     public int getDistance(String town1, String town2){
-        // TODO
+        int i = nameToIndex.get(town1);
+        int j = nameToIndex.get(town2);
+        return distances[i][j];
+    }
+
+    private class Record implements Comparable<Record>{
+        String townName;
+        int distance;
+
+        public Record(String townName, int distance){
+            this.townName = townName;
+            this.distance = distance;
+        }
+
+        public int compareTo(Record other){
+            return this.distance - other.distance;
+        }
     }
 
     /**
      * Get the shortest path from one town to another
      */
     public String[] shortestPath(String start, String end){
-        // TODO
+        HashMap<String, String> predecessor = new HashMap<>();
+        PriorityQueue<Record> queue = new PriorityQueue<>();
+        queue.add(new Record(start, 0));
+        while(!queue.isEmpty()){
+            Record currentRecord = queue.remove();
+            String currentTown = currentRecord.townName;
+            int currentDistance = currentRecord.distance;
+            if(currentTown.equals(end)){
+                System.out.println("Solved it with distance " + currentDistance);
+                return new String[0]; //recoverSolution(predecessor);
+            }
+            for(String neighbor : this.getNeighbors(currentTown)){
+                queue.add(
+                    new Record(
+                        neighbor, 
+                        currentDistance + getDistance(currentTown, neighbor)
+                ));
+                predecessor.put(neighbor, currentTown);
+            }
+        }
+        return null;
     }
 
     public String toString(){
@@ -70,6 +123,7 @@ public class RoadGraph {
         try {
             RoadGraph rg = new RoadGraph(new Scanner(new File("ma_map.csv")));
             System.out.println(rg);
+            rg.shortestPath("Taunton", "Holbrook");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
