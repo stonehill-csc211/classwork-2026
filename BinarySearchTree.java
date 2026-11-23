@@ -1,3 +1,6 @@
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class BinarySearchTree<T extends Comparable<T>> {
 
     Node root;
@@ -34,6 +37,34 @@ public class BinarySearchTree<T extends Comparable<T>> {
             // handle the case where we're removing the last element
             root = root.remove(element);
         }
+    }
+
+    public T getElement(T element){
+        if(root == null){
+            return null;
+        } else{
+            return root.getElement(element);
+        }
+    }
+
+    public String toString(){
+        if(root == null) return "";
+        else return root.toString();
+    }
+
+    public String toStringLevelOrder(){
+        Queue<Node> searchQueue = new LinkedList<Node>();
+        searchQueue.add(root);
+        StringBuilder sb = new StringBuilder();
+        while(!searchQueue.isEmpty()){
+            Node current = searchQueue.remove();
+            sb.append(current.value.toString());
+            sb.append(" ");
+            if(current.left != null) searchQueue.add(current.left);
+            if(current.right != null) searchQueue.add(current.right);
+        }
+        return sb.toString();
+        
     }
 
     
@@ -73,6 +104,18 @@ public class BinarySearchTree<T extends Comparable<T>> {
             } else {
                 if(right == null) return false;
                 return right.contains(query);
+            }
+        }
+
+        private T getElement(T query){
+            if(query.compareTo(value) == 0){
+                return value;
+            } else if(query.compareTo(value) < 0){
+                if(left == null) return null;
+                return left.getElement(query);
+            } else {
+                if(right == null) return null;
+                return right.getElement(query);
             }
         }
         
@@ -148,6 +191,26 @@ public class BinarySearchTree<T extends Comparable<T>> {
             else return this;
         }
 
+        public String toString(){
+            StringBuilder sb = new StringBuilder();
+            // in-order traversal
+            
+            if(left != null) {
+                sb.append(left.toString());
+                sb.append(" ");
+            }
+            
+            if(right != null) {
+                sb.append(right.toString());
+                sb.append(" ");
+            }
+            sb.append(value.toString());
+            sb.append(" ");
+            return sb.toString();
+        }
+
+        
+
         
     }
 
@@ -157,13 +220,11 @@ public class BinarySearchTree<T extends Comparable<T>> {
         myBst.add(4);
         myBst.add(5);
         myBst.add(2);
+        System.out.println(myBst.toStringLevelOrder());
         System.out.println(myBst.contains(5));
         System.out.println(myBst.contains(1));
         myBst.remove(5);
         System.out.println(myBst.contains(5));
 
-        System.out.println(myBst.contains(3));
-        myBst.remove(3);
-        System.out.println(myBst.contains(3));
     }
 }
