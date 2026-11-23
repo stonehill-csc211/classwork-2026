@@ -4,6 +4,7 @@ import java.util.List;
 public class KnightTour {
 
     int failures;
+    int successes;
     final int size;
 
     Board b;
@@ -21,7 +22,7 @@ public class KnightTour {
             retval.add(current);
             return retval; 
         } else{
-            current.visited = true;
+            current.visit();
             LinkedList<Square> result;
 
             // try each neighbor
@@ -43,13 +44,13 @@ public class KnightTour {
     }
 
     public static void main(String[] args){
-        for(int size = 2; size < 11; size++){
-            KnightTour kt = new KnightTour(size);
-            List<Square> solution = kt.solve(kt.b.getStart(), 1);
-            System.out.println(size + " solved with " + kt.failures + " failed paths.");
-            /*for(Square square : solution){
-                System.out.println(square);
-            }*/
+        int size = 20;
+        KnightTour kt = new KnightTour(size);
+        List<Square> solution = kt.solve(kt.b.getStart(), 1);
+        System.out.println(size + " solved with " + kt.failures + " failed paths.");
+        for(Square square : solution){
+            System.out.println(square);
         }
+        
     }
 }
